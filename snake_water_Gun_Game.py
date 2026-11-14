@@ -1,34 +1,46 @@
-"""1 is for snake
--1 is for water
-0 is for gun
+"""Snake, Water, Gun: a small command-line game against the computer.
+
+Rules: snake drinks water, water douses gun, gun kills snake.
 """
 import random
 
-computer = random.choice([1, -1, 0])
-your_choice = input("Enter your choice (s for snake, w for water, g for gun): ")
-yourdict = {"s": 1, "w": -1, "g": 0}
+CHOICES = {"s": "snake", "w": "water", "g": "gun"}
+# Each key beats its value.
+BEATS = {"snake": "water", "water": "gun", "gun": "snake"}
+VERBS = {"snake": "drinks", "water": "douses", "gun": "kills"}
 
-you = yourdict.get(your_choice)
 
-if you is None:
-    print("Invalid input")
-elif computer == 1 and you == -1:
-    print("Snake drinks water,you_lose.")
-elif computer == 1 and you == 0:
-    print("Gun kills the snake,you_win.")
-elif computer == 1 and you == 1:
-    print("Game tie.")
-elif computer == -1 and you == -1:
-    print("Game tie.")
-elif computer == -1 and you == 0:
-    print("Water douses gun, computer wins.")
-elif computer == -1 and you == 1:
-    print("Snake drinks water, you win.")
-elif computer == 0 and you == -1:
-    print("Water douses gun, you win.")
-elif computer == 0 and you == 0:
-    print("Game tie.")
-elif computer == 0 and you == 1:
-    print("Gun kills snake, you win.")
-else:
-    print("Something went wrong.")
+def decide(player, computer):
+    """Return 'tie', 'player' or 'computer'."""
+    if player == computer:
+        return "tie"
+    return "player" if BEATS[player] == computer else "computer"
+
+
+def play_round():
+    answer = input("Enter your choice (s = snake, w = water, g = gun): ").strip().lower()
+    if answer not in CHOICES:
+        print("Invalid input. Please enter s, w or g.")
+        return
+    player = CHOICES[answer]
+    computer = random.choice(list(CHOICES.values()))
+    print(f"You chose {player}, the computer chose {computer}.")
+    result = decide(player, computer)
+    if result == "tie":
+        print("Game tie.")
+    elif result == "player":
+        print(f"{player.capitalize()} {VERBS[player]} {computer}. You win!")
+    else:
+        print(f"{computer.capitalize()} {VERBS[computer]} {player}. Computer wins.")
+
+
+def main():
+    while True:
+        play_round()
+        if input("Play again? (y/n): ").strip().lower() != "y":
+            print("Thanks for playing!")
+            break
+
+
+if __name__ == "__main__":
+    main()
